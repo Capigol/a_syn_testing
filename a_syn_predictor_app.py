@@ -95,7 +95,7 @@ uploaded_file_1 = st.sidebar.file_uploader("Upload a TXT file with one SMILES pe
 #%% Standarization by MOLVS ####
 ####---------------------------------------------------------------------------####
 
-smiles_column = "SMILES"
+smiles_column = 0
 allowed_atoms = {"C","H","N","O","P","S","F","Cl","Br","I","B"}
 
 normalizer = rdMolStandardize.Normalizer()
