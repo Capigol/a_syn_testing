@@ -14,7 +14,6 @@ import pickle
 from rdkit import Chem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
-from openbabel import openbabel
 from mordred import Calculator, descriptors
 from multiprocessing import freeze_support
 import numpy as np
