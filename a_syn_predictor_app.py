@@ -309,7 +309,9 @@ def predictions(loaded_model, loaded_desc, X_final1):
     final_file = pd.concat([classification,palancas_final2['Confidence'], palancas_final3['Confidence3']], axis=1)
     
     final_file.rename(columns={0: "Prediction"},inplace=True)
-    
+
+    final_file["Confidence"] = final_file["Confidence"].astype(object)
+
     final_file.loc[final_file["Confidence"] >= 50, 'Confidence'] = 'HIGH'
     final_file.loc[(final_file["Confidence3"] >= 50) & (final_file["Confidence"] != "HIGH"), 'Confidence'] = 'MEDIUM'
     final_file.loc[final_file["Confidence3"] < 50, 'Confidence'] = 'LOW'
