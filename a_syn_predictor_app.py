@@ -27,7 +27,7 @@ import base64
 #---------------------------------#
 # Page layout
 ## Page expands to full width
-st.set_page_config(page_title='PaSynAI - Predictor of α-Synuclein Aggregation Inhibitors', page_icon="📏", layout='wide')
+st.set_page_config(page_title='PaSynAI - Predictor of α-Synuclein Aggregation Inhibitors', page_icon="📏", layout='centered')
 
 ######
 # Function to put a picture as header   
