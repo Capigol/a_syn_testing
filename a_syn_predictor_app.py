@@ -149,7 +149,7 @@ def calcular_descriptores(data):
     data["SMILES_STANDARDIZED"] = data[smiles_column].apply(standardize_smiles)
     df_quasi_final_estandarizado = data.copy()
     
-    smiles_final = list(df_quasi_final_estandarizado["standarized_SMILES"])
+    smiles_final = list(df_quasi_final_estandarizado["SMILES_STANDARDIZED"])
         
     # df_quasi_final_estandarizado["Final_SMILES"] = smiles_final
     
