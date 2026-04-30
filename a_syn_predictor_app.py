@@ -43,14 +43,17 @@ st.write("[![Website](https://img.shields.io/badge/website-LIDeB-blue)](https://
 st.subheader("📌" "About Us")
 
 st.markdown("""
-<div style="max-width: 700px; margin: auto; text-align: justify;">
 We are a drug discovery team with an interest in the development of publicly available open-source customizable
+
 cheminformatics tools to be used in computer-assisted drug discovery. We belong to the Laboratory of Bioactive
+
 Research and Development (LIDeB) of the National University of La Plata (UNLP), Argentina. 
-Our research group is focused on computer-guided drug repurposing and rational discovery of new drug candidates
-to treat epilepsy and neglected tropical diseases.
-</div>
-""", unsafe_allow_html=True)
+
+Our research group is focused on computer-guided drug repurposingand rational discovery of new drug candidates
+
+to treat epilepsy and neglected tropical diseases.            
+""")
+
 
 # Introduction
 #---------------------------------#
