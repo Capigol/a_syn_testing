@@ -425,7 +425,7 @@ text-align: center;
 <p>Made in  🐍 and <img style='display: ; 
 ' href="https://streamlit.io" src="https://i.imgur.com/iIOA6kU.png" target="_blank"></img> Developed with ❤️ by <a style='display: ;
  text-align: center' href="https://twitter.com/capigol" target="_blank">Lucas Alberca</a> for <a style='display: ; 
- text-align: center;' href="https://lideb.biol.unlp.edu.ar/" target="_blank">LIDeB</a> and 
+ text-align: center;' href="https://lideb.biol.unlp.edu.ar/" target="_blank">LIDeB</a> and ;
  text-align: center;' href="https://www.uab.cat/en/ibb" target="_blank">IIB</a></p>
 </div>
 """
