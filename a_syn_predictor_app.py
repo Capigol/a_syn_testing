@@ -289,7 +289,7 @@ def get_color(confidence):
         str: The color in hexadecimal format (e.g., '#RRGGBB').
     """
     # Define your color logic here based on confidence
-    if confidence == "HIGH" or confidence == "Substrate":
+    if confidence == "HIGH" or confidence == "Inhibitor":
         return 'lightgreen'
     elif confidence == "MEDIUM":
         return 'yellow'
@@ -331,7 +331,7 @@ def predictions(loaded_model, loaded_desc, X_final1):
 
     score_ensemble = dataframe_scores.min(axis=1)
     classification = score_ensemble >= 0.44
-    classification = classification.replace({True: 'Substrate', False: 'Non Substrate'})
+    classification = classification.replace({True: 'Inhibitor', False: 'Non Inhibitor'})
     
     final_file = pd.concat([classification,palancas_final2['Confidence'], palancas_final3['Confidence3']], axis=1)
     
@@ -360,13 +360,13 @@ def predictions(loaded_model, loaded_desc, X_final1):
 
 def final_plot(final_file):
     non_conclusives = len(final_file[final_file['Confidence'] == "LOW"]) 
-    substrates_hc = len(final_file[(final_file['Confidence'] == "HIGH") & (final_file['Prediction'] == 'Substrate')])
-    substrates_mc = len(final_file[(final_file['Confidence'] == "MEDIUM") & (final_file['Prediction'] == 'Substrate')])
+    substrates_hc = len(final_file[(final_file['Confidence'] == "HIGH") & (final_file['Prediction'] == 'Inhibitor')])
+    substrates_mc = len(final_file[(final_file['Confidence'] == "MEDIUM") & (final_file['Prediction'] == 'Inhibitor')])
 
     # Count values in 'DA' column higher than 50 and 'class' is 'no'
-    non_substrates_hc = len(final_file[(final_file['Confidence'] == "HIGH") & (final_file['Prediction'] == 'Non Substrate')])
-    non_substrates_mc = len(final_file[(final_file['Confidence'] == "MEDIUM") & (final_file['Prediction'] == 'Non Substrate')])
-    keys = ["Substrate - High confidence", "Substrate - Medium confidence", "Non Substrate - High confidence", "Non Substrate - Medium confidence", "Non conclusive"]
+    non_substrates_hc = len(final_file[(final_file['Confidence'] == "HIGH") & (final_file['Prediction'] == 'Non Inhibitor')])
+    non_substrates_mc = len(final_file[(final_file['Confidence'] == "MEDIUM") & (final_file['Prediction'] == 'Non Inhibitor')])
+    keys = ["Inhibitor - High confidence", "Inhibitor - Medium confidence", "Non Inhibitor - High confidence", "Non Inhibitor - Medium confidence", "Non conclusive"]
     fig = go.Figure(go.Pie(labels=keys, values=[substrates_hc, substrates_mc, non_substrates_hc, non_substrates_mc, non_conclusives]))
         
     fig.update_layout(title_text=None)
