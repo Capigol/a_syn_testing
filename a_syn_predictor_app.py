@@ -137,54 +137,83 @@ def standardize_smiles(smiles):
         return None
     return Chem.MolToSmiles(mol, canonical=True)
 
-
-#%% Calculating molecular descriptors
-### ----------------------- ###
-
 def calcular_descriptores(data):
-    
     data1x = pd.DataFrame()
-    data["SMILES_STANDARDIZED"] = data[smiles_column].apply(standardize_smiles)
-    df_quasi_final_estandarizado = data.copy()
     
-    smiles_final = list(df_quasi_final_estandarizado["SMILES_STANDARDIZED"])
+    # --- PASO 1: Estandarización con Barra de Progreso ---
+    st.write("### 1. Estandarizando moléculas...")
+    progress_std = st.progress(0)
+    status_std = st.empty()
+    
+    smiles_final = []
+    total_mols = len(data)
+    
+    # Reemplazamos el .apply por un bucle para poder actualizar la barra
+    for i, row in data.iterrows():
+        smi = row[smiles_column]
+        std_smi = standardize_smiles(smi)
+        smiles_final.append(std_smi)
         
-    # df_quasi_final_estandarizado["Final_SMILES"] = smiles_final
+        # Actualizar barra de estandarización
+        prog = (i + 1) / total_mols
+        progress_std.progress(prog)
+        if i % 10 == 0:
+            status_std.text(f"Molécula {i+1}/{total_mols}")
+            
+    data["SMILES_STANDARDIZED"] = smiles_final
+    status_std.success(f"✅ {total_mols} moléculas procesadas.")
+
+    # --- PASO 2: Cálculo de Descriptores ---
+    st.write("### 2. Calculando descriptores (Mordred)...")
+    progress_desc = st.progress(0)
+    t = st.empty()
     
     calc = Calculator(descriptors, ignore_3D=True) 
-    t = st.empty()
-   
     smiles_ok = []
-    for i,smiles in enumerate(smiles_final):
-        if __name__ == "__main__":
-                if smiles != None:
-                    try:
-                        mol = Chem.MolFromSmiles(smiles)
-                        freeze_support()
-                        descriptor1 = calc(mol)
-                        resu = descriptor1.asdict()
-                        solo_nombre = {'NAME' : f'SMILES_{i+1}'}
-                        solo_nombre.update(resu)
-
-                        solo_nombre = pd.DataFrame.from_dict(data=solo_nombre,orient="index")
-                        data1x = pd.concat([data1x, solo_nombre],axis=1, ignore_index=True)
-                        smiles_ok.append(smiles)
-                        t.markdown("Calculating descriptors for molecule: " + str(i +1) +"/" + str(len(smiles_final)))
-                    except:
-                        
-                        st.write(f'\rMolecule {smiles} has been removed (molecule not allowed by Mordred descriptor)')
-                else:
-                    pass
-
-    data1x = data1x.T
-    descriptores = data1x.set_index('NAME',inplace=False).copy()
-    descriptores = descriptores.reindex(sorted(descriptores.columns), axis=1)   
-    descriptores.replace([np.inf, -np.inf], np.nan, inplace=True)
-    descriptores = descriptores.apply(pd.to_numeric, errors = 'coerce') 
-    descriptores["Smiles_OK"] = smiles_ok
-    # descriptors_total = formal_charge_calculation(descriptores)
     
-    return descriptores, smiles_ok
+    for i, smiles in enumerate(smiles_final):
+        if smiles is not None:
+            try:
+                mol = Chem.MolFromSmiles(smiles)
+                # Nota: freeze_support() generalmente no es necesario dentro del loop, 
+                # se pone al inicio del script si usas multiprocessing.
+                
+                descriptor1 = calc(mol)
+                resu = descriptor1.asdict()
+                
+                solo_nombre = {'NAME' : f'SMILES_{i+1}'}
+                solo_nombre.update(resu)
+
+                # Optimización: Crear DataFrame y concatenar
+                temp_df = pd.DataFrame.from_dict(data=solo_nombre, orient="index").T
+                data1x = pd.concat([data1x, temp_df], ignore_index=True)
+                
+                smiles_ok.append(smiles)
+                
+                # Actualizar barra de descriptores
+                prog_d = (i + 1) / len(smiles_final)
+                progress_desc.progress(prog_d)
+                t.markdown(f"**Progreso:** {i+1} / {len(smiles_final)} descriptores calculados")
+                
+            except Exception as e:
+                st.warning(f"Molécula en índice {i} eliminada: No permitida por Mordred")
+        
+    # --- Post-procesamiento final ---
+    if not data1x.empty:
+        descriptores = data1x.set_index('NAME', inplace=False).copy()
+        descriptores = descriptores.reindex(sorted(descriptores.columns), axis=1)   
+        descriptores.replace([np.inf, -np.inf], np.nan, inplace=True)
+        descriptores = descriptores.apply(pd.to_numeric, errors='coerce') 
+        descriptores["Smiles_OK"] = smiles_ok
+        
+        t.success("¡Proceso completado con éxito!")
+        return descriptores, smiles_ok
+    else:
+        st.error("No se pudieron calcular descriptores para ninguna molécula.")
+        return pd.DataFrame(), []
+
+
+
 
 #%% Determining Applicability Domain (AD)
 
