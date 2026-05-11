@@ -140,8 +140,8 @@ def standardize_smiles(smiles):
 def calcular_descriptores(data):
     data1x = pd.DataFrame()
     
-    # --- PASO 1: Estandarización con Barra de Progreso ---
-    st.write("### 1. Estandarizando moléculas...")
+    # --- Step 1: Process bar---
+    st.write("### 1. Standardizing molecules...")
     progress_std = st.progress(0)
     status_std = st.empty()
     
@@ -158,13 +158,13 @@ def calcular_descriptores(data):
         prog = (i + 1) / total_mols
         progress_std.progress(prog)
         if i % 10 == 0:
-            status_std.text(f"Molécula {i+1}/{total_mols}")
+            status_std.text(f"Molecule {i+1}/{total_mols}")
             
     data["SMILES_STANDARDIZED"] = smiles_final
-    status_std.success(f"✅ {total_mols} moléculas procesadas.")
+    status_std.success(f"✅ {total_mols} processed molecules.")
 
-    # --- PASO 2: Cálculo de Descriptores ---
-    st.write("### 2. Calculando descriptores (Mordred)...")
+    # --- PASO 2: Descriptor calculation ---
+    st.write("### 2. Calculating descriptors (Mordred)...")
     progress_desc = st.progress(0)
     t = st.empty()
     
@@ -193,10 +193,10 @@ def calcular_descriptores(data):
                 # Actualizar barra de descriptores
                 prog_d = (i + 1) / len(smiles_final)
                 progress_desc.progress(prog_d)
-                t.markdown(f"**Progreso:** {i+1} / {len(smiles_final)} descriptores calculados")
+                t.markdown(f"**Progress:** {i+1} / {len(smiles_final)} calculated descriptors")
                 
             except Exception as e:
-                st.warning(f"Molécula en índice {i} eliminada: No permitida por Mordred")
+                st.warning(f"Molecule with index {i} was removed: Not allow by Mordred")
         
     # --- Post-procesamiento final ---
     if not data1x.empty:
@@ -206,10 +206,10 @@ def calcular_descriptores(data):
         descriptores = descriptores.apply(pd.to_numeric, errors='coerce') 
         descriptores["Smiles_OK"] = smiles_ok
         
-        t.success("¡Proceso completado con éxito!")
+        t.success("¡Succefully!")
         return descriptores, smiles_ok
     else:
-        st.error("No se pudieron calcular descriptores para ninguna molécula.")
+        st.error("Molecules not working.")
         return pd.DataFrame(), []
 
 
